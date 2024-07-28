@@ -30,7 +30,6 @@ switch (host)
         // Get Model
         deploymentName =
             ConsoleHelper.SelectFromOptions(
-                [Statics.GPT4oKey, Statics.GPT4TurboKey],
                 [Statics.GPT4oMiniKey, Statics.GPT4oKey, Statics.GPT4TurboKey],
                 "Please select the [yellow]model[/].");
 
@@ -84,8 +83,6 @@ while (true)
     if (!File.Exists(imageFilePath))
     {
         ConsoleHelper.WriteErrorMessageToConsole(
-            "Path doesn't exist.");
-        return;
             $"Path '{imageFilePath}' doesn't exist.");
         ConsoleHelper.WriteMessageToConsole(
             "Press any key to restart.");
