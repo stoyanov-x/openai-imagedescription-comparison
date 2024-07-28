@@ -124,7 +124,7 @@ while (true)
     using SKImage image = SKImage.FromBitmap(resizedBitmap);
     using SKData data = image.Encode(SKEncodedImageFormat.Jpeg, 75);
     byte[] imageArray = data.ToArray();
-    string base64Image = Convert.ToBase64String(imageArray);
+    using MemoryStream imageDataStream = new(imageArray, writable: false);
 
     // Create ChatCompletionsOptions
     ChatCompletionsOptions chatCompletionsOptions = new()
@@ -181,12 +181,8 @@ while (true)
                 new List<ChatMessageContentItem>
                 {
                     new ChatMessageImageContentItem(
-                        // TODO: Problematic with long base64 strings? Larger images?
-                        //   Ref https://github.com/restsharp/RestSharp/issues/1814
-                        //   Ref https://github.com/Azure/azure-sdk-for-net/issues/40855
-                        //   Ref https://github.com/Azure/azure-sdk-for-net/issues/40744
-                        new Uri($"data:image/{fileExtension};" +
-                        $"base64,{base64Image}"))
+                        imageDataStream,
+                        $"image/{fileExtension}")
                 }
             )
         },
