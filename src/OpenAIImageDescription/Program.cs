@@ -191,7 +191,7 @@ while (true)
             )
         },
         MaxTokens = 1000,
-        Temperature = 0.7f,
+        Temperature = 0.0f,
         DeploymentName = deploymentName
     };
 
