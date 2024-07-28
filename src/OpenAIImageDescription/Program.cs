@@ -31,6 +31,7 @@ switch (host)
         deploymentName =
             ConsoleHelper.SelectFromOptions(
                 [Statics.GPT4oKey, Statics.GPT4TurboKey],
+                [Statics.GPT4oMiniKey, Statics.GPT4oKey, Statics.GPT4TurboKey],
                 "Please select the [yellow]model[/].");
 
         // Create OpenAI client
