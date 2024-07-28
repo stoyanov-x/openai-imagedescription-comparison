@@ -124,6 +124,10 @@ while (true)
                 new List<ChatMessageContentItem>
                 {
                     new ChatMessageImageContentItem(
+                        // TODO: Problematic with long base64 strings? Larger images?
+                        //   Ref https://github.com/restsharp/RestSharp/issues/1814
+                        //   Ref https://github.com/Azure/azure-sdk-for-net/issues/40855
+                        //   Ref https://github.com/Azure/azure-sdk-for-net/issues/40744
                         new Uri($"data:image/{fileExtension};" +
                         $"base64,{base64Image}"))
                 }
