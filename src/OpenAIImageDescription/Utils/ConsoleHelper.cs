@@ -99,6 +99,13 @@ internal class ConsoleHelper
     public static void WriteMessageToConsole(
         string message)
     {
-        AnsiConsole.MarkupLine($"[white]{message}[/]");
+        if (JsonHelper.IsTripleBackTickJson(message, out string? json))
+        {
+            AnsiConsole.WriteLine(json);
+        }
+        else
+        {
+            AnsiConsole.MarkupLine($"[white]{message}[/]");
+        }
     }
 }

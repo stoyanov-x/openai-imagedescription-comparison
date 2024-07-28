@@ -396,3 +396,9 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Sample images
+samples/
+
+# MacOS files
+.DS_Store

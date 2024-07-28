@@ -7,4 +7,5 @@ internal class Statics
 
     public static string GPT4TurboKey = "gpt-4-turbo";
     public static string GPT4oKey = "gpt-4o";
+    public static string GPT4oMiniKey = "gpt-4o-mini";
 }

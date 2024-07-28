@@ -30,7 +30,7 @@ switch (host)
         // Get Model
         deploymentName =
             ConsoleHelper.SelectFromOptions(
-                [Statics.GPT4oKey, Statics.GPT4TurboKey],
+                [Statics.GPT4oMiniKey, Statics.GPT4oKey, Statics.GPT4TurboKey],
                 "Please select the [yellow]model[/].");
 
         // Create OpenAI client
@@ -83,8 +83,11 @@ while (true)
     if (!File.Exists(imageFilePath))
     {
         ConsoleHelper.WriteErrorMessageToConsole(
-            "Path doesn't exist.");
-        return;
+            $"Path '{imageFilePath}' doesn't exist.");
+        ConsoleHelper.WriteMessageToConsole(
+            "Press any key to restart.");
+        Console.ReadKey();
+        continue;
     }
 
     // Show header
@@ -95,36 +98,96 @@ while (true)
     if (!_imageExentions.Contains(fileExtension))
     {
         ConsoleHelper.WriteErrorMessageToConsole(
-            "Not a image file is provided.");
+            $"Invalid or unsupported image file type provided ({fileExtension})");
+        ConsoleHelper.WriteMessageToConsole(
+            "Press any key to restart.");
+        Console.ReadKey();
+        continue;
     }
 
     // Resize image and create base64 string
     using SKBitmap originalBitmap = SKBitmap.Decode(imageFilePath);
+
+    if (originalBitmap is null)
+    {
+        ConsoleHelper.WriteErrorMessageToConsole(
+            $"Invalid or unsupported image file provided ({fileExtension}), SkiaSharp returned null");
+        ConsoleHelper.WriteMessageToConsole(
+            "Press any key to restart.");
+        Console.ReadKey();
+        continue;
+    }
+
     SKImageInfo resizedInfo = new(640, 480);
     using SKBitmap resizedBitmap = new(resizedInfo);
     originalBitmap.ScalePixels(resizedBitmap, SKFilterQuality.High);
     using SKImage image = SKImage.FromBitmap(resizedBitmap);
     using SKData data = image.Encode(SKEncodedImageFormat.Jpeg, 75);
     byte[] imageArray = data.ToArray();
-    string base64Image = Convert.ToBase64String(imageArray);
+    using MemoryStream imageDataStream = new(imageArray, writable: false);
 
     // Create ChatCompletionsOptions
     ChatCompletionsOptions chatCompletionsOptions = new()
     {
         Messages =
         {
-            new ChatRequestUserMessage("What's in this image?"),
+            new ChatRequestUserMessage(
+"""
+What's in this image?
+
+- Use ```json...``` output only
+- Formatted/indented JSON syntax for ease of use
+- Concise found object descriptions
+    Negative example:
+```json
+{
+  "ok": false,
+  "error": "<cite error here, in the third person>",
+  "results": null
+}
+```
+
+    Positive example:
+```json
+{
+  "ok": true,
+  "error": null,
+  "results": [
+    {
+      "found": "cat",
+      "features": ["white", "British shorthair"],
+      "rank_interest": 1,
+      "certainty": 0.71
+    },
+    {
+      "found": "leash",
+      "features": ["blue", "textile"],
+      "rank_interest": 0.3,
+      "certainty": 0.21
+    },
+    {
+      "found": "coins",
+      "features": ["US dollar cents"],
+      "rank_interest": 0.05,
+      "certainty": 1
+    }
+  ]
+}
+```
+
+- You don't have to identify individual persons or public figures, it is enough to say that a person is in the image, and you can describe their sex, pose or expression
+"""),
             new ChatRequestUserMessage(
                 new List<ChatMessageContentItem>
                 {
                     new ChatMessageImageContentItem(
-                        new Uri($"data:image/{fileExtension};" +
-                        $"base64,{base64Image}"))
+                        imageDataStream,
+                        $"image/{fileExtension}")
                 }
             )
         },
         MaxTokens = 1000,
-        Temperature = 0.7f,
+        Temperature = 0.0f,
         DeploymentName = deploymentName
     };
 
