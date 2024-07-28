@@ -101,11 +101,26 @@ while (true)
     if (!_imageExentions.Contains(fileExtension))
     {
         ConsoleHelper.WriteErrorMessageToConsole(
-            "Not a image file is provided.");
+            $"Invalid or unsupported image file type provided ({fileExtension})");
+        ConsoleHelper.WriteMessageToConsole(
+            "Press any key to restart.");
+        Console.ReadKey();
+        continue;
     }
 
     // Resize image and create base64 string
     using SKBitmap originalBitmap = SKBitmap.Decode(imageFilePath);
+
+    if (originalBitmap is null)
+    {
+        ConsoleHelper.WriteErrorMessageToConsole(
+            $"Invalid or unsupported image file provided ({fileExtension}), SkiaSharp returned null");
+        ConsoleHelper.WriteMessageToConsole(
+            "Press any key to restart.");
+        Console.ReadKey();
+        continue;
+    }
+
     SKImageInfo resizedInfo = new(640, 480);
     using SKBitmap resizedBitmap = new(resizedInfo);
     originalBitmap.ScalePixels(resizedBitmap, SKFilterQuality.High);
