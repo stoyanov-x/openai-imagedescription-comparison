@@ -134,7 +134,52 @@ while (true)
     {
         Messages =
         {
-            new ChatRequestUserMessage("What's in this image?"),
+            new ChatRequestUserMessage(
+                @"""
+                    What's in this image?
+
+                    - Use ```json...``` output only
+                    - Formatted/indented JSON syntax for ease of use
+                    - Concise found object descriptions
+                        Negative example:
+```json
+{
+  ""ok"": false,
+  ""error"": ""<cite error here, in the third person>"",
+  ""results"": null
+}
+```
+
+                        Positive example:
+```json
+{
+  ""ok"": true,
+  ""error"": null,
+  ""results"": [
+    {
+      ""found"": ""cat"",
+      ""features"": [""white"", ""British shorthair""],
+      ""rank_interest"": 1,
+      ""certainty"": 0.71
+    },
+    {
+      ""found"": ""leash"",
+      ""features"": [""blue"", ""textile""],
+      ""rank_interest"": 0.3,
+      ""certainty"": 0.21
+    },
+    {
+      ""found"": ""coins"",
+      ""features"": [""US dollar cents""],
+      ""rank_interest"": 0.05,
+      ""certainty"": 1
+    }
+  ]
+}
+```
+
+                    - You don't have to identify individual persons or public figures, it is enough to say that a person is in the image, and you can describe their sex, pose or expression
+                 """),
             new ChatRequestUserMessage(
                 new List<ChatMessageContentItem>
                 {
