@@ -86,6 +86,11 @@ while (true)
         ConsoleHelper.WriteErrorMessageToConsole(
             "Path doesn't exist.");
         return;
+            $"Path '{imageFilePath}' doesn't exist.");
+        ConsoleHelper.WriteMessageToConsole(
+            "Press any key to restart.");
+        Console.ReadKey();
+        continue;
     }
 
     // Show header
